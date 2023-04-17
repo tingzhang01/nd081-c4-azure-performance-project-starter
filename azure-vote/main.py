@@ -11,18 +11,44 @@ from datetime import datetime
 # TODO: Import required libraries for App Insights
 
 # Logging
-logger = # TODO: Setup logger
+#logger = # TODO: Setup logger
+config_integration.trace_integrations(['logging'])
+config_integration.trace_integrations(['requests'])
+# Standard Logging
+logger = logging.getLogger(__name__)
+handler = AzureLogHandler(connection_string='InstrumentationKey=[your-guid]')
+handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(handler)
+# Logging custom Events 
+logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=[your-guid]'))
+# Set the logging level
+logger.setLevel(logging.INFO)
 
 # Metrics
-exporter = # TODO: Setup exporter
+#exporter = # TODO: Setup exporter
+exporter = metrics_exporter.new_metrics_exporter(
+  enable_standard_metrics=True,
+  connection_string='InstrumentationKey=[your-guid]')
+view_manager.register_exporter(exporter)
 
 # Tracing
-tracer = # TODO: Setup tracer
+#tracer = # TODO: Setup tracer
+tracer = Tracer(
+    exporter=AzureExporter(
+        connection_string='InstrumentationKey=[your-guid]'),
+    sampler=ProbabilitySampler(1.0),
+)
+app = Flask(__name__)
 
 app = Flask(__name__)
 
 # Requests
-middleware = # TODO: Setup flask middleware
+#middleware = # TODO: Setup flask middleware
+middleware = FlaskMiddleware(
+    app,
+    exporter=AzureExporter(connection_string="InstrumentationKey=[your-guid]"),
+    sampler=ProbabilitySampler(rate=1.0)
+)
 
 # Load configurations from environment or config file
 app.config.from_pyfile('config_file.cfg')
