@@ -1,3 +1,5 @@
+# App Insights
+# TODO: Import required libraries for App Insights
 from flask import Flask, request, render_template
 import os
 import random
@@ -6,13 +8,6 @@ import socket
 import sys
 import logging
 from datetime import datetime
-
-# App Insights
-# TODO: Import required libraries for App Insights
-import logging
-from datetime import datetime
-# App Insights
-# TODO: Import required libraries for App Insights
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.log_exporter import AzureEventHandler
 from opencensus.ext.azure import metrics_exporter
@@ -26,6 +21,7 @@ from opencensus.ext.azure.trace_exporter import AzureExporter
 from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
+
 # For metrics
 stats = stats_module.stats
 view_manager = stats.view_manager
@@ -36,11 +32,11 @@ config_integration.trace_integrations(['logging'])
 config_integration.trace_integrations(['requests'])
 # Standard Logging
 logger = logging.getLogger(__name__)
-handler = AzureLogHandler(connection_string='InstrumentationKey=[your-guid]')
+handler = AzureLogHandler(connection_string='InstrumentationKey=67ba9d0c-e869-4128-af1f-a0e4e47b1bbd')
 handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
 logger.addHandler(handler)
 # Logging custom Events 
-logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=[your-guid]'))
+logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=67ba9d0c-e869-4128-af1f-a0e4e47b1bbd'))
 # Set the logging level
 logger.setLevel(logging.INFO)
 
@@ -48,14 +44,14 @@ logger.setLevel(logging.INFO)
 #exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
   enable_standard_metrics=True,
-  connection_string='InstrumentationKey=[your-guid]')
+  connection_string='InstrumentationKey=67ba9d0c-e869-4128-af1f-a0e4e47b1bbd')
 view_manager.register_exporter(exporter)
 
 # Tracing
 #tracer = # TODO: Setup tracer
 tracer = Tracer(
     exporter=AzureExporter(
-        connection_string='InstrumentationKey=[your-guid]'),
+        connection_string='InstrumentationKey=67ba9d0c-e869-4128-af1f-a0e4e47b1bbd'),
     sampler=ProbabilitySampler(1.0),
 )
 app = Flask(__name__)
@@ -66,7 +62,7 @@ app = Flask(__name__)
 #middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string="InstrumentationKey=[your-guid]"),
+    exporter=AzureExporter(connection_string="InstrumentationKey=67ba9d0c-e869-4128-af1f-a0e4e47b1bbd"),
     sampler=ProbabilitySampler(rate=1.0)
 )
 
